@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/powerman/perl-Test-Mock-Time.svg?branch=master)](https://travis-ci.org/powerman/perl-Test-Mock-Time)
+[![Coverage Status](https://coveralls.io/repos/powerman/perl-Test-Mock-Time/badge.svg?branch=master)](https://coveralls.io/r/powerman/perl-Test-Mock-Time?branch=master)
+
 # NAME
 
 Test::Mock::Time - Deterministic time & timers for event loop tests

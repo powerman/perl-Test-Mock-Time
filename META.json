@@ -32,12 +32,13 @@
       "develop" : {
          "requires" : {
             "Dist::Milla" : "v1.0.15",
+            "Test::Perl::Critic" : "0",
             "Test::Pod" : "1.41"
          }
       },
       "runtime" : {
          "requires" : {
-            "perl" : "5.008005"
+            "perl" : "5.010001"
          }
       },
       "test" : {
@@ -53,6 +54,17 @@
       }
    },
    "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/powerman/perl-Test-Mock-Time/issues"
+      },
+      "homepage" : "https://github.com/powerman/perl-Test-Mock-Time",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/powerman/perl-Test-Mock-Time.git",
+         "web" : "https://github.com/powerman/perl-Test-Mock-Time"
+      }
+   },
    "version" : "v0.0.1"
 }
 
