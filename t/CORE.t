@@ -22,7 +22,7 @@ is 0+@loc, 9, 'localtime returns 9 values';
 is 0+@gmt, 9, 'gmttime returns 9 values';
 
 is time(), $t, 'time()';
-is CORE::time(), $t, 'CORE::time()';
+cmp_ok CORE::time(), '>=', $t, 'CORE::time() looks like time()';
 is CORE::GLOBAL::time(), $t, 'CORE::GLOBAL::time()';
 select undef,undef,undef,1.1;
 cmp_ok CORE::time(), '>', $t, 'CORE::time() is increased';
