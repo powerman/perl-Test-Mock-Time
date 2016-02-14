@@ -5,6 +5,7 @@ use Test::More;
 use Test::Mock::Time;
 
 my @exports = qw(
+    ff
 );
 my @not_exports = qw(
 );
