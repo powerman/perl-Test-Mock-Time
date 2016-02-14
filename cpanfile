@@ -1,4 +1,4 @@
-requires 'perl', '5.010001';
+requires 'perl', '5.018000';
 
 requires 'Export::Attrs';
 requires 'Test::MockModule';
