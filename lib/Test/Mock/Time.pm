@@ -1,5 +1,5 @@
 package Test::Mock::Time;
-use 5.018000;
+use 5.010001;
 use warnings;
 use strict;
 use utf8;

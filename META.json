@@ -40,7 +40,7 @@
          "requires" : {
             "Export::Attrs" : "0",
             "Test::MockModule" : "0",
-            "perl" : "5.018000"
+            "perl" : "5.010001"
          }
       },
       "test" : {
