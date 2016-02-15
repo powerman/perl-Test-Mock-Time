@@ -39,14 +39,23 @@
       "runtime" : {
          "requires" : {
             "Export::Attrs" : "0",
+            "Scalar::Util" : "0",
             "Test::MockModule" : "0",
             "perl" : "5.010001"
          }
       },
       "test" : {
+         "recommends" : {
+            "EV" : "0",
+            "Mojolicious" : "0",
+            "Time::HiRes" : "0"
+         },
          "requires" : {
             "Test::Exception" : "0",
             "Test::More" : "0.96"
+         },
+         "suggests" : {
+            "AnyEvent" : "0"
          }
       }
    },
