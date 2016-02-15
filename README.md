@@ -113,7 +113,6 @@ See ["SYNOPSIS"](#synopsis) for explanation how they works.
 
         EV::once
         EV::Watcher::feed_event
-        EV::Watcher::keepalive
 
 # SUPPORT
 

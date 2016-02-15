@@ -232,9 +232,23 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         my $tick = 0;
         my $w;
         if (@Timers) {
+            ## no critic (ProhibitBooleanGrep)
             $w = $Module{'EV'}->original('timer')->(
-                $WAIT_ONE_TICK, $WAIT_ONE_TICK, sub { if (!$tick++) { ff() } }
+                $WAIT_ONE_TICK, $WAIT_ONE_TICK, sub {
+                    if (!$tick++ || !$flags) {
+                        ff();
+                    }
+                    if (!@Timers) {
+                        shift->stop;
+                    }
+                    elsif (!$flags && !grep {$_} map {$_->keepalive} grep {$_} map {$_->{watcher}} @Timers) {
+                        shift->keepalive(0);
+                    }
+                }
             );
+            if (!$flags && !grep {$_} map {$_->keepalive} grep {$_} map {$_->{watcher}} @Timers) {
+                $w->keepalive(0);
+            }
         }
         # $tick above and this second RUN_ONCE is work around bug in EV-4.10+
         # http://lists.schmorp.de/pipermail/libev/2016q1/002656.html
@@ -247,7 +261,6 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         if ($flags && $flags == EV::RUN_ONCE()) {
             $Module{'EV'}->original('run')->(@_);
         }
-        # FIXME returned $active value doesn't take in account @Timers
         return $Module{'EV'}->original('run')->(@_);
     });
     $Module{'EV'}->mock(timer => sub ($$$) {
@@ -595,7 +608,6 @@ All required methods except:
 
     EV::once
     EV::Watcher::feed_event
-    EV::Watcher::keepalive
 
 =back
 
