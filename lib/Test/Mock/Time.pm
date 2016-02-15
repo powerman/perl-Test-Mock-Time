@@ -268,8 +268,7 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
     $Module{'EV'}->mock(timer => sub ($$$) {
         my ($after, $repeat, $cb) = @_;
         my $w = $Module{'EV'}->original('timer_ns')->(@_);
-        my $weakw = $w;
-        weaken($weakw);
+        weaken(my $weakw = $w);
         _add_timer('EV', $after, $repeat, sub { $weakw && $weakw->invoke(EV::TIMER()) }, $w);
         return $w;
     });
@@ -286,8 +285,7 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         }
         my $after = $at > $Absolute+$Relative ? $at - ($Absolute+$Relative) : 0;
         my $w = $Module{'EV'}->original('periodic_ns')->(@_);
-        my $weakw = $w;
-        weaken($weakw);
+        weaken(my $weakw = $w);
         _add_timer('EV', $after, $repeat, sub { $weakw && $weakw->invoke(EV::TIMER()) }, $w);
         return $w;
     });
