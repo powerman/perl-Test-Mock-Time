@@ -23,13 +23,11 @@ is 0+@gmt, 9, 'gmttime returns 9 values';
 
 is time(), $t, 'time()';
 cmp_ok CORE::time(), '>=', $t, 'CORE::time() looks like time()';
-is CORE::GLOBAL::time(), $t, 'CORE::GLOBAL::time()';
 select undef,undef,undef,1.1;
 cmp_ok CORE::time(), '>', $t, 'CORE::time() is increased';
 cmp_ok CORE::localtime(), 'ne', $loc, 'CORE::localtime() is changed';
 is time, $t, 'time is same after real 1.1 second delay';
 is time(), $t, 'time() is same';
-is CORE::GLOBAL::time(), $t, 'CORE::GLOBAL::time() is same';
 is scalar localtime, $loc, 'localtime is same';
 is scalar gmtime, $gmt, 'gmtime is same';
 

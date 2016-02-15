@@ -128,11 +128,11 @@ sub _mock_core_global {
         return int($Absolute + $Relative);
     });
     $Module{'CORE::GLOBAL'}->mock(localtime => sub (;$) {
-        my $time = $_[0] // CORE::GLOBAL::time();
+        my $time = $_[0] // int($Absolute + $Relative);
         return CORE::localtime($time);
     });
     $Module{'CORE::GLOBAL'}->mock(gmtime => sub (;$) {
-        my $time = $_[0] // CORE::GLOBAL::time();
+        my $time = $_[0] // int($Absolute + $Relative);
         return CORE::gmtime($time);
     });
     $Module{'CORE::GLOBAL'}->mock(sleep => sub ($) {
