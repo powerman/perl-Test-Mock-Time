@@ -15,7 +15,7 @@ my $gmt = gmtime;
 my @gmt = gmtime;
 
 cmp_ok $t, '>', 1455000000, 'time looks like current actual time';
-is scalar gmtime 1455000000, 'Tue Feb  9 06:40:00 2016', 'gmtime with param';
+is scalar gmtime(1455000000), 'Tue Feb  9 06:40:00 2016', 'gmtime with param';
 like $loc, qr/\d\d:\d\d:\d\d/ms, 'scalar localtime looks like time';
 like $gmt, qr/\d\d:\d\d:\d\d/ms, 'scalar gmtime looks like time';
 is 0+@loc, 9, 'localtime returns 9 values';
