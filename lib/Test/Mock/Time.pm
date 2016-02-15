@@ -494,7 +494,10 @@ Test::Mock::Time - Deterministic time & timers for event loop tests
 
 =head1 VERSION
 
-This document describes Test::Mock::Time version v0.1.2=head1 SYNOPSIS
+This document describes Test::Mock::Time version v0.1.2
+
+
+=head1 SYNOPSIS
 
   use Test::Mock::Time;
 
