@@ -2,6 +2,10 @@ Revision history for Test-Mock-Time
 
 {{$NEXT}}
 
+v0.1.2  2016-02-15 15:37:39 EET
+	- Improve EV::run() support.
+	- Bugfixes.
+
 v0.1.1  2016-02-15 08:27:25 EET
 	- Improve tests portability (BSD).
 

@@ -62,7 +62,7 @@
    "provides" : {
       "Test::Mock::Time" : {
          "file" : "lib/Test/Mock/Time.pm",
-         "version" : "v0.1.1"
+         "version" : "v0.1.2"
       }
    },
    "release_status" : "stable",
@@ -77,6 +77,6 @@
          "web" : "https://github.com/powerman/perl-Test-Mock-Time"
       }
    },
-   "version" : "v0.1.1"
+   "version" : "v0.1.2"
 }
 
