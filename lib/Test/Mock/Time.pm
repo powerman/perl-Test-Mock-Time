@@ -43,6 +43,7 @@ eval {
 };
 
 
+# FIXME make ff() reentrant
 sub ff :Export(:DEFAULT) {
     my ($dur) = @_;
 
@@ -66,7 +67,7 @@ sub ff :Export(:DEFAULT) {
         $dur -= $next_at - $Relative;
         $Relative = $next_at;
     }
-    $Timers[0]{cb}->();
+    my $cb = $Timers[0]{cb};
     if (!$Timers[0]{repeat}) {
         if ($Timers[0]{watcher}) {
             _stop_timer($Timers[0]{watcher});
@@ -79,6 +80,7 @@ sub ff :Export(:DEFAULT) {
         $Timers[0]{after} = $Timers[0]{repeat};
         $Timers[0]{start} = $Relative;
     }
+    $cb->();
     @_ = ($dur);
     goto &ff;
 }
