@@ -1,6 +1,8 @@
 Revision history for Test-Mock-Time
 
 {{$NEXT}}
+
+v0.1.1  2016-02-15 08:27:25 EET
 	- Improve tests portability (BSD).
 
 v0.1.0  2016-02-14 21:59:31 EET
