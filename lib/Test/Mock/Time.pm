@@ -52,23 +52,27 @@ sub ff :Export(:DEFAULT) {
         $a->{id} cmp $b->{id}   # preserve order to simplify tests
         } @Timers;
     my $next_at = @Timers ? $Timers[0]{start}+$Timers[0]{after} : 0;
+    $next_at = sprintf '%.6f', $next_at;
 
     if (!defined $dur) {
         $dur = $next_at > $Relative ? $next_at - $Relative : 0;
+        $dur = sprintf '%.6f', $dur;
     }
     croak "ff($dur): negative time not invented yet" if $dur < 0;
 
-    if (!$next_at || $next_at > $Relative+$dur) {
+    if ($next_at == 0 || $next_at > $Relative+$dur) {
         $Relative += $dur;
+        $Relative = sprintf '%.6f', $Relative;
         return;
     }
 
     if ($next_at > $Relative) {
         $dur -= $next_at - $Relative;
+        $dur = sprintf '%.6f', $dur;
         $Relative = $next_at;
     }
     my $cb = $Timers[0]{cb};
-    if (!$Timers[0]{repeat}) {
+    if ($Timers[0]{repeat} == 0) {
         if ($Timers[0]{watcher}) {
             _stop_timer($Timers[0]{watcher});
         }
@@ -93,8 +97,8 @@ sub _add_timer {
         id      => $id,
         start   => $Relative,
         loop    => $loop,
-        after   => $after,
-        repeat  => $repeat,
+        after   => sprintf('%.6f', $after < 0 ? 0 : $after),
+        repeat  => sprintf('%.6f', $repeat < 0 ? 0 : $repeat),
         cb      => $cb,
         watcher => $watcher,
     };
@@ -141,6 +145,7 @@ sub _mock_core_global {
         my $dur = int $_[0];
         croak 'sleep with negative value is not supported' if $dur < 0;
         $Relative += $dur;
+        $Relative = sprintf '%.6f', $Relative;
         return $dur;
     });
     return;
@@ -154,7 +159,7 @@ sub _mock_time_hires {
 
     $Module{'Time::HiRes'} = Test::MockModule->new('Time::HiRes');
     $Module{'Time::HiRes'}->mock(time => sub () {
-        return $Absolute + $Relative;
+        return 0+sprintf '%.6f', $Absolute + $Relative;
     });
     $Module{'Time::HiRes'}->mock(gettimeofday => sub () {
         my $t = sprintf '%.6f', $Absolute + $Relative;
@@ -163,10 +168,10 @@ sub _mock_time_hires {
     $Module{'Time::HiRes'}->mock(clock_gettime => sub (;$) {
         my ($which) = @_;
         if ($which == CLOCK_REALTIME()) {
-            return $Absolute + $Relative;
+            return 0+sprintf '%.6f', $Absolute + $Relative;
         }
         elsif ($which == CLOCK_MONOTONIC()) {
-            return $Monotonic + $Relative;
+            return 0+sprintf '%.6f', $Monotonic + $Relative;
         }
         return TIME_HIRES_CLOCK_NOT_SUPPORTED;
     });
@@ -182,18 +187,21 @@ sub _mock_time_hires {
         croak 'sleep without arg is not supported' if !@_;
         croak "Time::HiRes::sleep($seconds): negative time not invented yet" if $seconds < 0;
         $Relative += $seconds;
+        $Relative = sprintf '%.6f', $Relative;
         return $seconds;
     });
     $Module{'Time::HiRes'}->mock(usleep => sub ($) {
         my ($useconds) = @_;
         croak "Time::HiRes::usleep($useconds): negative time not invented yet" if $useconds < 0;
         $Relative += $useconds / MICROSECONDS;
+        $Relative = sprintf '%.6f', $Relative;
         return $useconds;
     });
     $Module{'Time::HiRes'}->mock(nanosleep => sub ($) {
         my ($nanoseconds) = @_;
         croak "Time::HiRes::nanosleep($nanoseconds): negative time not invented yet" if $nanoseconds < 0;
         $Relative += $nanoseconds / NANOSECONDS;
+        $Relative = sprintf '%.6f', $Relative;
         return $nanoseconds;
     });
     $Module{'Time::HiRes'}->mock(clock_nanosleep => sub ($$;$) {
@@ -202,6 +210,7 @@ sub _mock_time_hires {
         croak 'only CLOCK_REALTIME and CLOCK_MONOTONIC are supported' if $which != CLOCK_REALTIME() && $which != CLOCK_MONOTONIC();
         croak 'only flags=0 is supported' if $flags;
         $Relative += $nanoseconds / NANOSECONDS;
+        $Relative = sprintf '%.6f', $Relative;
         return $nanoseconds;
     });
     return;
@@ -216,10 +225,10 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
     $Module{'EV::Timer'}    = Test::MockModule->new('EV::Timer',    no_auto=>1);
     $Module{'EV::Periodic'} = Test::MockModule->new('EV::Periodic', no_auto=>1);
     $Module{'EV'}->mock(time => sub () {
-        return $Absolute + $Relative;
+        return 0+sprintf '%.6f', $Absolute + $Relative;
     });
     $Module{'EV'}->mock(now => sub () {
-        return $Absolute + $Relative;
+        return 0+sprintf '%.6f', $Absolute + $Relative;
     });
     $Module{'EV'}->mock(sleep => sub ($) {
         my ($seconds) = @_;
@@ -227,6 +236,7 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
             $seconds = 0;
         }
         $Relative += $seconds;
+        $Relative = sprintf '%.6f', $Relative;
         return;
     });
     $Module{'EV'}->mock(run => sub (;$) {
@@ -280,10 +290,15 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
     $Module{'EV'}->mock(periodic => sub ($$$$) {
         my ($at, $repeat, $reschedule_cb, $cb) = @_;
         croak 'reschedule_cb is not supported yet' if $reschedule_cb;
-        if ($repeat && $at < $Absolute+$Relative) {
-            $at += $repeat * int(($Absolute+$Relative - $at) / $repeat + 1);
+        $at = sprintf '%.6f', $at < 0 ? 0 : $at;
+        $repeat = sprintf '%.6f', $repeat < 0 ? 0 : $repeat;
+        my $now = sprintf '%.6f', $Absolute + $Relative;
+        if ($repeat > 0 && $at < $now) {
+            $at += $repeat * int(($now - $at) / $repeat + 1);
+            $at = sprintf '%.6f', $at;
         }
-        my $after = $at > $Absolute+$Relative ? $at - ($Absolute+$Relative) : 0;
+        my $after = $at > $now ? $at - $now : 0;
+        $after = sprintf '%.6f', $after;
         my $w = $Module{'EV'}->original('periodic_ns')->(@_);
         weaken(my $weakw = $w);
         _add_timer('EV', $after, $repeat, sub { $weakw && $weakw->invoke(EV::TIMER()) }, $w);
@@ -324,8 +339,8 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         my ($timer) = grep { $_->{watcher} && $_->{watcher} eq $w } @Timers, @Timers_ns;
         if ($timer) {
             $timer->{start} = $Relative;
-            $timer->{after} = $after;
-            $timer->{repeat}= $repeat;
+            $timer->{after} = sprintf '%.6f', $after < 0 ? 0 : $after;
+            $timer->{repeat}= sprintf '%.6f', $repeat < 0 ? 0 : $repeat;
         }
         return;
     });
@@ -333,17 +348,20 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         my ($w) = @_;
         my ($timer) = grep { $_->{watcher} && $_->{watcher} eq $w } @Timers, @Timers_ns;
         if ($timer) {
-            return $timer->{start} + $timer->{after} - $Relative;
+            return 0+sprintf '%.6f', $timer->{start} + $timer->{after} - $Relative;
         }
         return;
     });
     $Module{'EV::Timer'}->mock(again => sub {
         my ($w, $repeat) = @_;
+        if (defined $repeat && $repeat < 0) {
+            $repeat = 0;
+        }
         my ($active) = grep { $_->{watcher} && $_->{watcher} eq $w } @Timers;
         my ($inactive) = grep { $_->{watcher} && $_->{watcher} eq $w } @Timers_ns;
         if ($active) {
-            $active->{repeat} = $repeat // $active->{repeat};
-            if ($active->{repeat}) {
+            $active->{repeat} = sprintf '%.6f', $repeat // $active->{repeat};
+            if ($active->{repeat} > 0) {
                 $active->{after} = $active->{repeat};
                 $active->{start} = $Relative;
             }
@@ -352,8 +370,8 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
             }
         }
         elsif ($inactive) {
-            $inactive->{repeat} = $repeat // $inactive->{repeat};
-            if ($inactive->{repeat}) {
+            $inactive->{repeat} = sprintf '%.6f', $repeat // $inactive->{repeat};
+            if ($inactive->{repeat} > 0) {
                 $inactive->{after} = $inactive->{repeat};
                 $inactive->{start} = $Relative;
                 _start_timer($inactive->{watcher});
@@ -376,10 +394,15 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
     $Module{'EV::Periodic'}->mock(set => sub {
         my ($w, $at, $repeat, $reschedule_cb, $cb) = @_;
         croak 'reschedule_cb is not supported yet' if $reschedule_cb;
-        if ($repeat && $at < $Absolute+$Relative) {
-            $at += $repeat * int(($Absolute+$Relative - $at) / $repeat + 1);
+        $at = sprintf '%.6f', $at < 0 ? 0 : $at;
+        $repeat = sprintf '%.6f', $repeat < 0 ? 0 : $repeat;
+        my $now = sprintf '%.6f', $Absolute + $Relative;
+        if ($repeat > 0 && $at < $now) {
+            $at += $repeat * int(($now - $at) / $repeat + 1);
+            $at = sprintf '%.6f', $at;
         }
-        my $after = $at > $Absolute+$Relative ? $at - ($Absolute+$Relative) : 0;
+        my $after = $at > $now ? $at - $now : 0;
+        $after = sprintf '%.6f', $after;
         my ($timer) = grep { $_->{watcher} && $_->{watcher} eq $w } @Timers, @Timers_ns;
         if ($timer) {
             $timer->{start} = $Relative;
@@ -395,7 +418,7 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         my ($w) = @_;
         my ($timer) = grep { $_->{watcher} && $_->{watcher} eq $w } @Timers, @Timers_ns;
         if ($timer) {
-            return $timer->{start} + $timer->{after};
+            return 0+sprintf '%.6f', $timer->{start} + $timer->{after};
         }
         return;
     });
