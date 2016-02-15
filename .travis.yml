@@ -26,6 +26,7 @@ before_install:
   - cpanm -nq Devel::Cover::Report::Coveralls
 install:
   - cpanm -nq --installdeps .
+  - cpanm -nq EV Mojolicious AnyEvent
 script:
   - perl Build.PL && ./Build && cover -test
 after_success:
