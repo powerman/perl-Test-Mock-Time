@@ -39,6 +39,7 @@
       "runtime" : {
          "requires" : {
             "Export::Attrs" : "0",
+            "List::Util" : "1.33",
             "Scalar::Util" : "0",
             "Test::MockModule" : "0",
             "perl" : "5.010001"

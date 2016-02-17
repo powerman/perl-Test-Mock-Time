@@ -1,6 +1,7 @@
 requires 'perl', '5.010001';
 
 requires 'Export::Attrs';
+requires 'List::Util', '1.33';
 requires 'Scalar::Util';
 requires 'Test::MockModule';
 

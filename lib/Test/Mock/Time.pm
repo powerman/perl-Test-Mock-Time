@@ -8,6 +8,7 @@ use Carp;
 our $VERSION = 'v0.1.3';
 
 use Export::Attrs;
+use List::Util qw( any );
 use Scalar::Util qw( weaken );
 use Test::MockModule;
 
@@ -244,21 +245,23 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         my $tick = 0;
         my $w;
         if (@Timers) {
-            ## no critic (ProhibitBooleanGrep)
             $w = $Module{'EV'}->original('timer')->(
                 $WAIT_ONE_TICK, $WAIT_ONE_TICK, sub {
+                    my $me = shift;
+                    my $k;
                     if (!$tick++ || !$flags) {
+                        $k = $me->keepalive(0);
                         ff();
                     }
                     if (!@Timers) {
-                        shift->stop;
+                        $me->stop;
                     }
-                    elsif (!$flags && !grep {$_} map {$_->keepalive} grep {$_} map {$_->{watcher}} @Timers) {
-                        shift->keepalive(0);
+                    elsif ($k && ($flags || any {$_->{watcher} && $_->{watcher}->keepalive} @Timers)) {
+                        $me->keepalive(1);
                     }
                 }
             );
-            if (!$flags && !grep {$_} map {$_->keepalive} grep {$_} map {$_->{watcher}} @Timers) {
+            if (!($flags || any {$_->{watcher} && $_->{watcher}->keepalive} @Timers)) {
                 $w->keepalive(0);
             }
         }
