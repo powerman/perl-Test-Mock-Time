@@ -4,6 +4,7 @@ requires 'Export::Attrs';
 requires 'List::Util', '1.33';
 requires 'Scalar::Util';
 requires 'Test::MockModule';
+requires 'bignum';
 
 on configure => sub {
     requires 'Module::Build::Tiny', '0.034';
