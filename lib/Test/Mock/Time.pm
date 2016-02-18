@@ -5,7 +5,7 @@ use strict;
 use utf8;
 use Carp;
 
-our $VERSION = 'v0.1.4';
+our $VERSION = 'v0.1.5';
 
 use Export::Attrs;
 use List::Util qw( any );
@@ -499,7 +499,7 @@ Test::Mock::Time - Deterministic time & timers for event loop tests
 
 =head1 VERSION
 
-This document describes Test::Mock::Time version v0.1.4
+This document describes Test::Mock::Time version v0.1.5
 
 
 =head1 SYNOPSIS

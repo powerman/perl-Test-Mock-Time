@@ -1,6 +1,8 @@
 Revision history for Test-Mock-Time
 
 {{$NEXT}}
+
+v0.1.5  2016-02-18 14:27:57 EET
 	- Fix floating point math on perl with -Duselongdouble.
 
 v0.1.4  2016-02-17 19:37:45 EET
