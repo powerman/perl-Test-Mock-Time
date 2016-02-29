@@ -1,6 +1,8 @@
 Revision history for Test-Mock-Time
 
 {{$NEXT}}
+
+v0.1.6  2016-02-29 23:22:56 EET
 	- Reformat doc.
 	- Drop support for Mojolicious < 6.0.
 
