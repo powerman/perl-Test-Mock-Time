@@ -60,31 +60,31 @@ These functions are exported by default:
 
 # INTERFACE
 
-- WAIT\_ONE\_TICK
+## WAIT\_ONE\_TICK
 
-        $Test::Mock::Time::WAIT_ONE_TICK = 0.05;
+    $Test::Mock::Time::WAIT_ONE_TICK = 0.05;
 
-    This value is used to limit amount of real time spend waiting for
-    non-timer (usually I/O) event while one tick of event loop if there are
-    some active timers. In case no events happens while this time event loop
-    will be interrupted and time will be fast-forward to time when next timer
-    should expire by calling ff().
+This value is used to limit amount of real time spend waiting for
+non-timer (usually I/O) event while one tick of event loop if there are
+some active timers. In case no events happens while this time event loop
+will be interrupted and time will be fast-forward to time when next timer
+should expire by calling ff().
 
-- ff
+## ff
 
-        ff( $seconds );
-        ff();
+    ff( $seconds );
+    ff();
 
-    Fast-forward current time by $seconds (can be fractional). All functions
-    like time() will returns previous value increased by $seconds after that.
+Fast-forward current time by $seconds (can be fractional). All functions
+like time() will returns previous value increased by $seconds after that.
 
-    Will run callbacks for pending timers of your event loop if they'll expire
-    while $seconds or if they've already expired (because you've used functions
-    like sleep() which fast-forward time without processing timers).
+Will run callbacks for pending timers of your event loop if they'll expire
+while $seconds or if they've already expired (because you've used functions
+like sleep() which fast-forward time without processing timers).
 
-    When called without params will fast-forward time by amount needed to run
-    callback for next pending timer (it may be 0 in case there are no pending
-    timers or if next pending timer already expired).
+When called without params will fast-forward time by amount needed to run
+callback for next pending timer (it may be 0 in case there are no pending
+timers or if next pending timer already expired).
 
 ## Mocked functions/methods from other modules
 
@@ -161,7 +161,7 @@ Alex Efros &lt;powerman@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2016 by Alex Efros &lt;powerman@cpan.org>.
+This software is Copyright (c) 2016- by Alex Efros &lt;powerman@cpan.org>.
 
 This is free software, licensed under:
 
