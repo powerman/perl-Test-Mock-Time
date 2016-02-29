@@ -494,6 +494,8 @@ __END__
 
 =encoding utf8
 
+=for stopwords localtime gmtime gettimeofday usleep nanosleep
+
 =head1 NAME
 
 Test::Mock::Time - Deterministic time & timers for event loop tests

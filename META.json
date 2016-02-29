@@ -50,7 +50,7 @@
       "test" : {
          "recommends" : {
             "EV" : "0",
-            "Mojolicious" : "0",
+            "Mojolicious" : "6",
             "Time::HiRes" : "0"
          },
          "requires" : {
