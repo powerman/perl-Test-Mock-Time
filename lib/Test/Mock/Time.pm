@@ -39,6 +39,8 @@ eval {
     _mock_ev();
 };
 eval {
+    require Mojolicious;
+    Mojolicious->VERSION('6'); # may be compatible with older ones, needs testing
     require Mojo::Reactor::Poll;
     _mock_mojolicious();
 };

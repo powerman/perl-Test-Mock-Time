@@ -15,7 +15,7 @@ on test => sub {
     requires 'Test::More', '0.96';
     recommends 'Time::HiRes';
     recommends 'EV';
-    recommends 'Mojolicious';
+    recommends 'Mojolicious', '6';
     suggests 'AnyEvent';
 };
 

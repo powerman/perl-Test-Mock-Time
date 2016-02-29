@@ -9,7 +9,8 @@ use Test::Mock::Time;
 
 BEGIN {
     plan skip_all => 'EV not installed' if !eval { require EV };
-    plan skip_all => 'Mojolicious not installed' if !eval { require Mojo::IOLoop };
+    plan skip_all => 'Mojolicious not installed'
+        if !eval { require Mojolicious; Mojolicious->VERSION('6'); require Mojo::IOLoop };
 }
 
 my $t = time;
