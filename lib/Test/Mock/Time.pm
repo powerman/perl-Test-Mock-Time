@@ -343,7 +343,9 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
     });
     $Module{'EV::Timer'}->mock(set => sub {
         my ($w, $after, $repeat) = @_;
-        $repeat = 0 unless defined $repeat;
+        if (!defined $repeat) {
+            $repeat = 0;
+        }
         my ($timer) = grep { $_->{watcher} && $_->{watcher} eq $w } @Timers, @Timers_ns;
         if ($timer) {
             $timer->{start} = $Relative;
