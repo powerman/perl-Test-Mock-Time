@@ -1,4 +1,4 @@
-requires 'perl', '5.010001';
+requires 'perl', '5.008001';
 
 requires 'Export::Attrs';
 requires 'List::Util', '1.33';

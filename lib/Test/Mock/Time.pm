@@ -1,5 +1,5 @@
 package Test::Mock::Time;
-use 5.010001;
+use 5.008001;
 use warnings;
 use strict;
 use utf8;
@@ -92,9 +92,10 @@ sub ff :Export(:DEFAULT) {
     goto &ff;
 }
 
+{
+my $next_id = 0;
 sub _add_timer {
     my ($loop, $after, $repeat, $cb, $watcher) = @_;
-    state $next_id = 0;
     my $id = sprintf 'fake_%05d', $next_id++;
     push @Timers, {
         id      => $id,
@@ -109,6 +110,7 @@ sub _add_timer {
         weaken($Timers[-1]{watcher});
     }
     return $id;
+}
 }
 
 sub _start_timer {
@@ -137,11 +139,11 @@ sub _mock_core_global {
         return int($Absolute + $Relative);
     });
     $Module{'CORE::GLOBAL'}->mock(localtime => sub (;$) {
-        my $time = $_[0] // int($Absolute + $Relative);
+        my $time = defined $_[0] ? $_[0] : int($Absolute + $Relative);
         return CORE::localtime($time);
     });
     $Module{'CORE::GLOBAL'}->mock(gmtime => sub (;$) {
-        my $time = $_[0] // int($Absolute + $Relative);
+        my $time = defined $_[0] ? $_[0] : int($Absolute + $Relative);
         return CORE::gmtime($time);
     });
     $Module{'CORE::GLOBAL'}->mock(sleep => sub ($) {
@@ -341,7 +343,7 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
     });
     $Module{'EV::Timer'}->mock(set => sub {
         my ($w, $after, $repeat) = @_;
-        $repeat //= 0;
+        $repeat = 0 unless defined $repeat;
         my ($timer) = grep { $_->{watcher} && $_->{watcher} eq $w } @Timers, @Timers_ns;
         if ($timer) {
             $timer->{start} = $Relative;
@@ -366,7 +368,7 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         my ($active) = grep { $_->{watcher} && $_->{watcher} eq $w } @Timers;
         my ($inactive) = grep { $_->{watcher} && $_->{watcher} eq $w } @Timers_ns;
         if ($active) {
-            $active->{repeat} = sprintf '%.6f', $repeat // $active->{repeat};
+            $active->{repeat} = sprintf '%.6f', defined $repeat ? $repeat : $active->{repeat};
             if ($active->{repeat} > 0) {
                 $active->{after} = $active->{repeat};
                 $active->{start} = $Relative;
@@ -376,7 +378,7 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
             }
         }
         elsif ($inactive) {
-            $inactive->{repeat} = sprintf '%.6f', $repeat // $inactive->{repeat};
+            $inactive->{repeat} = sprintf '%.6f', defined $repeat ? $repeat : $inactive->{repeat};
             if ($inactive->{repeat} > 0) {
                 $inactive->{after} = $inactive->{repeat};
                 $inactive->{start} = $Relative;
