@@ -13,7 +13,7 @@ on configure => sub {
 on test => sub {
     requires 'Test::Exception';
     requires 'Test::More', '0.96';
-    recommends 'Time::HiRes';
+    recommends 'Time::HiRes', '1.9724';
     recommends 'EV';
     recommends 'Mojolicious', '6';
     suggests 'AnyEvent';
