@@ -290,7 +290,8 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         return $w;
     });
     $Module{'EV'}->mock(timer_ns => sub ($$$) {
-        my $w = EV::timer(@_);
+        my ($after, $repeat, $cb) = @_;
+        my $w = EV::timer($after, $repeat, $cb);
         _stop_timer($w);
         return $w;
     });
@@ -313,7 +314,8 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         return $w;
     });
     $Module{'EV'}->mock(periodic_ns => sub ($$$$) {
-        my $w = EV::periodic(@_);
+        my ($at, $repeat, $reschedule_cb, $cb) = @_;
+        my $w = EV::periodic($at, $repeat, $reschedule_cb, $cb);
         _stop_timer($w);
         return $w;
     });
@@ -408,7 +410,7 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         $repeat = sprintf '%.6f', $repeat < 0 ? 0 : $repeat;
         my $now = sprintf '%.6f', $Absolute + $Relative;
         if ($repeat > 0 && $at < $now) {
-            use bignum;
+            use bigint;
             $at += $repeat * int(($now - $at) / $repeat + 1);
             $at = sprintf '%.6f', $at;
         }
