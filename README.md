@@ -7,7 +7,7 @@ Test::Mock::Time - Deterministic time & timers for event loop tests
 
 # VERSION
 
-This document describes Test::Mock::Time version v0.2.0
+This document describes Test::Mock::Time version v0.2.1
 
 # SYNOPSIS
 
