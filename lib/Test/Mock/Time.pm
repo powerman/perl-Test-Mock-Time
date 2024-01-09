@@ -410,7 +410,7 @@ sub _mock_ev { ## no critic (ProhibitExcessComplexity)
         $repeat = sprintf '%.6f', $repeat < 0 ? 0 : $repeat;
         my $now = sprintf '%.6f', $Absolute + $Relative;
         if ($repeat > 0 && $at < $now) {
-            use bigint;
+            use bignum;
             $at += $repeat * int(($now - $at) / $repeat + 1);
             $at = sprintf '%.6f', $at;
         }
